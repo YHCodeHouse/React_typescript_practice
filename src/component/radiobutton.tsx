@@ -4,6 +4,20 @@ import styled from "styled-components";
 interface RadioButtonDefaultType {
   name: string;
 }
+
+const Radio = ({
+  name,
+  children
+}: PropsWithChildren<RadioButtonDefaultType>) => (
+  <RadioWrapper>
+    <Label>
+      <Input name={name} type="radio" />
+      <Mark />
+      {children}
+    </Label>
+  </RadioWrapper>
+);
+
 const RadioWrapper = styled.div`
   display: inline-block;
 `;
@@ -54,18 +68,5 @@ const Label = styled.label`
   padding: 5px 10px 5px 0;
   position: relative;
 `;
-
-const Radio = ({
-  name,
-  children
-}: PropsWithChildren<RadioButtonDefaultType>) => (
-  <RadioWrapper>
-    <Label>
-      <Input name={name} type="radio" />
-      <Mark />
-      {children}
-    </Label>
-  </RadioWrapper>
-);
 
 export default Radio;

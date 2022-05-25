@@ -2,6 +2,7 @@ import React, { PropsWithChildren, useCallback, useState } from "react";
 import styled from "styled-components";
 import Radio from "./radiobutton";
 import Checkbox from "./checkbox";
+
 interface ModalDefaultType {
   onClickToggleModal: () => void;
   order?: Array<number>;
@@ -15,19 +16,28 @@ const Modal = ({
   children
 }: PropsWithChildren<ModalDefaultType>) => {
   const [isOpenEdit, setOpenEdit] = useState<boolean>(false);
-  const [isChecked, setIsChecked] = useState({ checked: false });
+  const [checkedItems, setCheckedItems] = useState(new Set());
+
   const onClickToggleEdit = useCallback(() => {
     setOpenEdit(!isOpenEdit);
   }, [isOpenEdit]);
-  const onChange = (event: any) => {
-    setIsChecked({ checked: event.target.checked });
+
+  const checkedItemHandler = (id: string, isChecked: boolean) => {
+    if (isChecked) {
+      checkedItems.add(id);
+      setCheckedItems(checkedItems);
+    } else if (!isChecked && checkedItems.has(id)) {
+      checkedItems.delete(id);
+      setCheckedItems(checkedItems);
+    }
   };
+
   const label = ["asdf", "qwer"];
   const checkboxData = [
-    { id: 1, name: "딸기", checked: false },
-    { id: 2, name: "사과", checked: false },
-    { id: 3, name: "바나나", checked: false },
-    { id: 4, name: "귤", checked: false }
+    { id: "1", name: "딸기", checked: false },
+    { id: "2", name: "사과", checked: false },
+    { id: "3", name: "바나나", checked: false },
+    { id: "4", name: "귤", checked: false }
   ];
 
   return (
@@ -55,11 +65,14 @@ const Modal = ({
               ))}
           </div>
           <div>
-            {label &&
-              label.map(item => (
-                <label>
-                  <Checkbox checked={isChecked.checked} onChange={onChange} />
-                  <span style={{ marginLeft: 8 }}>{item}</span>
+            {checkboxData &&
+              checkboxData.map(item => (
+                <label key={item.id}>
+                  <Checkbox
+                    item={item}
+                    checkedItemHandler={checkedItemHandler}
+                  />
+                  <span style={{ marginLeft: 8 }}>{item.name}</span>
                 </label>
               ))}
           </div>
@@ -68,6 +81,7 @@ const Modal = ({
     </>
   );
 };
+
 const theme = {
   fg: "palevioletred",
   bg: "white"
@@ -102,10 +116,7 @@ const DialogBox = styled.dialog`
 `;
 
 const Input = styled.input.attrs(props => ({
-  // we can define static props
   type: "text",
-
-  // or we can define dynamic ones
   size: props.size || "1em"
 }))`
   color: palevioletred;

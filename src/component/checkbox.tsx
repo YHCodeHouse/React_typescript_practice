@@ -1,5 +1,43 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components/macro";
+
+interface CheckboxData {
+  id: string;
+  name: string;
+  checked: boolean;
+}
+const Checkbox = ({
+  className,
+  item,
+  checkedItemHandler,
+  ...props
+}: {
+  className?: string;
+  item: CheckboxData;
+  checkedItemHandler: (id: string, isChecked: boolean) => void;
+  props?: any[];
+}) => {
+  const [bChecked, setChecked] = useState(false);
+
+  const checkHandler = ({ target }: any) => {
+    setChecked(!bChecked);
+    checkedItemHandler(target.id, target.checked);
+  };
+  return (
+    <CheckboxContainer className={className}>
+      <HiddenCheckbox
+        checked={bChecked}
+        onChange={e => checkHandler(e)}
+        {...props}
+      />
+      <StyledCheckbox checked={bChecked}>
+        <Icon viewBox="0 0 24 24">
+          <polyline points="20 6 9 17 4 12" />
+        </Icon>
+      </StyledCheckbox>
+    </CheckboxContainer>
+  );
+};
 
 const CheckboxContainer = styled.div`
   display: inline-block;
@@ -11,8 +49,7 @@ const Icon = styled.svg`
   stroke: white;
   stroke-width: 2px;
 `;
-// Hide checkbox visually but remain accessible to screen readers.
-// Source: https://polished.js.org/docs/#hidevisually
+
 const HiddenCheckbox = styled.input.attrs({ type: "checkbox" })`
   border: 0;
   clip: rect(0 0 0 0);
@@ -47,28 +84,5 @@ const StyledCheckbox = styled.div<{ checked: boolean }>`
     visibility: ${props => (props.checked ? "visible" : "hidden")};
   }
 `;
-
-const Checkbox = ({
-  className,
-  checked,
-  onChange,
-  ...props
-}: {
-  className?: string;
-  checked: boolean;
-  onChange: (event: any) => void;
-  props?: any[];
-}) => {
-  return (
-    <CheckboxContainer className={className}>
-      <HiddenCheckbox checked={checked} onChange={onChange} {...props} />
-      <StyledCheckbox checked={checked}>
-        <Icon viewBox="0 0 24 24">
-          <polyline points="20 6 9 17 4 12" />
-        </Icon>
-      </StyledCheckbox>
-    </CheckboxContainer>
-  );
-};
 
 export default Checkbox;
