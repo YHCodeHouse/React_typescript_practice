@@ -1,5 +1,5 @@
 import React, { PropsWithChildren, useCallback, useState } from "react";
-import styled from "styled-components";
+import styled from "@emotion/styled";
 import Radio from "./radiobutton";
 import Checkbox from "./checkbox";
 
@@ -8,13 +8,12 @@ interface ModalDefaultType {
   order?: Array<number>;
   onAddItem: () => void;
 }
-
-const Modal = ({
-  onClickToggleModal,
-  order = [],
-  onAddItem,
-  children
-}: PropsWithChildren<ModalDefaultType>) => {
+interface Theme {
+  fg?: string;
+  bg?: string;
+}
+const Modal = (props: PropsWithChildren<ModalDefaultType>) => {
+  const { onClickToggleModal, order = [], onAddItem, children } = props;
   const [isOpenEdit, setOpenEdit] = useState<boolean>(false);
   const [checkedItems, setCheckedItems] = useState(new Set());
 
@@ -82,62 +81,84 @@ const Modal = ({
   );
 };
 
-const theme = {
+const theme: Theme = {
   fg: "palevioletred",
   bg: "white"
 };
 
-const theme2 = {
+const theme2: Theme = {
   fg: "white",
   bg: "palevioletred"
 };
 
-const ModalContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: fixed;
-`;
+const ModalContainer = styled("div")(() => {
+  return {
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "fixed"
+  };
+});
 
-const DialogBox = styled.dialog`
-  width: 800px;
-  height: 400px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border: none;
-  border-radius: 3px;
-  box-shadow: 0 0 30px rgba(30, 30, 30, 0.185);
-  box-sizing: border-box;
-  background-color: white;
-  z-index: 10000;
-`;
+const DialogBox = styled("dialog")(() => {
+  return {
+    width: "800px",
+    height: "400px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    border: "none",
+    borderRadius: "3px",
+    boxShadow: "0 0 30px rgba(30, 30, 30, 0.185)",
+    boxSizing: "border-box",
+    backgroundColor: "white",
+    zIndex: 10000
+  };
+});
 
-const Input = styled.input.attrs(props => ({
-  type: "text",
-  size: props.size || "1em"
-}))`
-  color: palevioletred;
-  font-size: 1em;
-  border: 2px solid palevioletred;
-  border-radius: 3px;
+const Input = styled("input")(props => {
+  const margin = props.size ? props.size : 10;
 
-  /* here we use the dynamically computed prop */
-  margin: ${props => props.size};
-  padding: ${props => props.size};
-`;
+  return {
+    color: "palevioletred",
+    fontSize: "1em",
+    border: "2px solid palevioletred",
+    borderRadius: "3px",
 
-const DialogButton = styled.button`
-  color: ${props => props.theme.fg};
-  border: 2px solid ${props => props.theme.fg};
-  background: ${props => props.theme.bg};
+    /* here we use the dynamically computed prop */
+    margin: margin,
+    padding: props.size
+  };
+});
 
-  font-size: 1em;
-  margin: 1em;
-  padding: 0.25em 1em;
-  border-radius: 3px;
-`;
+// const Input = styled.input((props: any) => ({
+//   type: "text",
+//   size: props.size || "1em"
+// }))`
+//   color: palevioletred;
+//   font-size: 1em;
+//   border: 2px solid palevioletred;
+//   border-radius: 3px;
+
+//   /* here we use the dynamically computed prop */
+//   margin: ${props => props.size};
+//   padding: ${props => props.size};
+// `;
+
+const DialogButton = styled("button")(props => {
+  const Theme: Theme = props.theme;
+  return {
+    color: `${Theme.fg}` ? `${Theme.fg}` : "palevioletred",
+    border: `2px solid ${Theme.fg}`,
+    background: `${Theme.bg}`,
+
+    fontSize: "1em",
+    margin: "1em",
+    padding: "0.25em 1em",
+    borderRadius: "3px"
+  };
+});
 
 export default Modal;
